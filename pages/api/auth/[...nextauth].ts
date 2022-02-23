@@ -2,11 +2,13 @@ import NextAuth from "next-auth"
 import EmailProvider from "next-auth/providers/email";
 import SequelizeAdapter,  { models }  from "@next-auth/sequelize-adapter"
 import { Sequelize, DataTypes } from "sequelize"
-const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: 'database.sqlite'
-})
-export default NextAuth({
+import type { NextApiRequest, NextApiResponse } from "next"
+
+const sequelize = new Sequelize("sqlite::memory:")
+
+export default async function auth(req: NextApiRequest, res: NextApiResponse) {
+  return await NextAuth(req, res, {
+
   debug: true,
     adapter: SequelizeAdapter(sequelize, {
       synchronize: true,
@@ -32,4 +34,5 @@ export default NextAuth({
     session: {
         strategy: "database"
     }
-})
+  })
+}
